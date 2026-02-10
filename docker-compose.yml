@@ -1,0 +1,6 @@
+version: '3.8'
+
+services:
+  diet-app:
+    image: jcheema2004/diet-analysis:latest
+    container_name: diet_app_container
