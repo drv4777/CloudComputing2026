@@ -1,0 +1,29 @@
+FROM python:3.9-slim
+
+# Set working directory
+WORKDIR /app
+
+# OPTIMIZATION 1: Layer Caching
+COPY requirements.txt .
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+# OPTIMIZATION 2: Selective File Copying
+COPY data_analysis.py .
+COPY All_Diets.csv .  
+
+# OPTIMIZATION 3: Create output directory
+RUN mkdir -p /app/outputs
+
+# OPTIMIZATION 4: Security - Non-root user
+
+RUN useradd -m -u 1000 appuser && \
+    chown -R appuser:appuser /app
+USER appuser
+
+# OPTIMIZATION 5: Python optimization flags
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
+
+# Default command
+CMD ["python", "data_analysis.py"]
